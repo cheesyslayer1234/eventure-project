@@ -1,9 +1,49 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>DVOPS - Event Management Web App</title>
+  <meta charset="UTF-8" />
+  <title>Eventure – View Events</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-Welcome to my Event Management Web Application. In this application, users
-will get to manage events.
+  <!-- Header -->
+  <header class="app-header">
+    <div class="app-logo">Eventure</div>
+  </header>
+
+  <!-- Main content -->
+  <main class="page">
+    <!-- Hero / heading -->
+    <section class="hero">
+      <h1>Connect with events that matter to you</h1>
+      <button class="btn btn-primary" id="create-event-btn">
+        + Create Event
+      </button>
+    </section>
+
+    <!-- Event cards -->
+    <section class="events-section">
+      <div id="events-container" class="events-grid">
+        <!-- Cards will be injected here by view-events.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Delete confirmation modal -->
+  <div id="delete-modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <p class="modal__title">Are you sure you want to delete?</p>
+      <div class="modal__actions">
+        <button id="confirm-delete-btn" class="btn btn-danger">Confirm</button>
+        <button id="cancel-delete-btn" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main script -->
+  <script src="js/view-events.js" defer></script>
 </body>
 </html>
