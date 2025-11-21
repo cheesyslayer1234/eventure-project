@@ -139,10 +139,11 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 
+# CUSTOM RULES FOR DEVOPS (MIKEAL)
 
-# ^ ^ / CUSTOM RULES FOR DEVOPS ASSIGNMENT (ADDED BY MIKEAL)
-# Ignore runtime event data file (not committed)
+# Ignore runtime event data file (team JSON data storage - not committed)
 utils/events.json
 
-# Track empty folders using .gitkeep
-*.gitkeep
+# Keep events template under version control
+!utils/events.template.json
+

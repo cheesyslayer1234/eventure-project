@@ -1,0 +1,16 @@
+# Normalise text files to LF in the repository
+* text=auto eol=lf
+
+# Explicitly treat common source files as text with LF endings
+*.js   text eol=lf
+*.css  text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+
+# Treat images and other binaries as binary to avoid corruption
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
