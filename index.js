@@ -11,16 +11,19 @@ app.use(bodyParser.json());
 // Import backend handlers
 const { viewEvents } = require('./utils/ViewEventUtil');
 const { deleteEvent } = require('./utils/MikealLeowUtil');
+const { addEventlisting } = require('./utils/MalcolmNgUtil');
 
 // API: View Events (must come before express.static)
 app.get('/view-events', viewEvents);
+
+// API: Add Event (from add-event branch)
+app.post('/add-event', addEventlisting);
 
 // API: Delete Event
 app.delete('/delete-event/:id', async (req, res) => {
   const id = req.params.id;
   const result = await deleteEvent(id);
 
-  // result = { success: boolean, message: string }
   if (result.success) {
     return res.status(200).json(result);
   } else {
@@ -39,8 +42,7 @@ app.get('/', (req, res) => {
 // Start server
 const server = app.listen(PORT, function () {
   const address = server.address();
-  const baseUrl =
-    `http://${address.address === '::' ? 'localhost' : address.address}:${address.port}`;
+  const baseUrl = `http://${address.address === '::' ? 'localhost' : address.address}:${address.port}`;
   console.log(`Demo project at: ${baseUrl}`);
 });
 
