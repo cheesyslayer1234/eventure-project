@@ -2,8 +2,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const { Event } = require('../models/Event');
 
-const RESOURCES_FILE = path.join(__dirname, '../utils/event.json');
-const TEMPLATE_FILE = path.join(__dirname, '../utils/event.template.json');
+const RESOURCES_FILE = path.join(__dirname, 'events.json');
+const TEMPLATE_FILE = path.join(__dirname, 'event.template.json');
 
 async function addEventlisting(req, res) {
     try {

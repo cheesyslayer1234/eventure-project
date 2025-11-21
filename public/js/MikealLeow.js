@@ -63,7 +63,7 @@ function renderEvents(events) {
     card.className = "event-card";
 
     card.innerHTML = `
-      <div class="event-card__image"></div>
+      <div class="event-card__image">${event.image ? `<img src="${event.image}" alt="${event.name || "Event image"}" onerror="this.src='https://via.placeholder.com/300x160.png';" />` : `<img src="https://via.placeholder.com/300x160.png" alt="Placeholder image" />`}</div>
 
       <div class="event-card__body">
         <h2 class="event-title">${event.name}</h2>
