@@ -24,7 +24,6 @@
 
     <!-- Main -->
     <main class="page">
-
       <!-- Hero -->
       <section class="hero">
         <h1>Connect with events that matter to you</h1>
@@ -32,7 +31,7 @@
         <!-- Add Event Button -->
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn-black" 
           data-toggle="modal"
           data-target="#addEventModal"
         >
@@ -59,7 +58,7 @@
     >
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-          <div class="modal-header bg-success text-white">
+          <div class="modal-header bg-black">
             <h5 class="modal-title" id="addEventModalLabel">Add New Event</h5>
             <button type="button" class="close text-white" data-dismiss="modal">
               &times;
@@ -110,10 +109,14 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            <button
+              type="button"
+              class="btn-black"
+              data-dismiss="modal"
+            >
               Close
             </button>
-            <button type="button" class="btn btn-success" onclick="addEvent()">
+            <button type="button" class="btn-black" onclick="addEvent()">
               Add Event
             </button>
           </div>
@@ -122,12 +125,16 @@
     </div>
 
     <!-- Delete modal -->
-    <div id="delete-modal-overlay" class="modal-overlay hidden">
-      <div class="modal">
+    <div id="delete-modal-overlay" class="delete-modal-overlay hidden">
+      <div class="delete-modal">
         <p class="modal__title">Are you sure you want to delete?</p>
         <div class="modal__actions">
-          <button id="confirm-delete-btn" class="btn btn-danger">Confirm</button>
-          <button id="cancel-delete-btn" class="btn btn-secondary">Cancel</button>
+          <button id="confirm-delete-btn" class="btn btn-danger">
+            Confirm
+          </button>
+          <button id="cancel-delete-btn" class="btn btn-secondary">
+            Cancel
+          </button>
         </div>
       </div>
     </div>

@@ -146,19 +146,36 @@ body {
   gap: 8px;
 }
 
+.btn-black {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #000;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.btn-black:hover {
+  background-color: #222; /* slightly lighter on hover */
+}
+
+.bg-black {
+  background-color: #000 !important;
+  color: #fff; /* optional, ensures text is white */
+}
+
 /*Modal*/
-.modal-overlay {
+.delete-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000; /* ensure it sits above Bootstrap modals */
 }
 
-.modal {
-  background: #ffffff;
+.delete-modal {
+  background: #fff;
   padding: 24px 32px;
   min-width: 320px;
   max-width: 400px;
