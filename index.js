@@ -11,13 +11,13 @@ app.use(bodyParser.json());
 // Import backend handlers
 const { viewEvents } = require('./utils/ViewEventUtil');
 const { deleteEvent } = require('./utils/MikealLeowUtil');
-const { addEventlisting } = require('./utils/MalcolmNgUtil');
+const { addEvent } = require('./utils/MalcolmNgUtil');
 
 // API: View Events (must come before express.static)
 app.get('/view-events', viewEvents);
 
 // API: Add Event (from add-event branch)
-app.post('/add-event', addEventlisting);
+app.post('/add-event', addEvent);
 
 // API: Delete Event
 app.delete('/delete-event/:id', async (req, res) => {
