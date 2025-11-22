@@ -1,70 +1,67 @@
+// Holds loaded events in memory
 let eventsData = [];
+
+// Stores the ID of the event selected for deletion
 let pendingDeleteId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   loadEvents();
 
+  // Create Event button → opens modal
   const createBtn = document.getElementById("create-event-btn");
   if (createBtn) {
     createBtn.addEventListener("click", () => {
-      alert("Create Event feature will be handled by another teammate.");
+      $("#addEventModal").modal("show");
     });
   }
 
   setupDeleteModal();
 });
 
-/**
- * Fetch events from backend and render them
- */
+
+// Fetch events from backend and render them
 async function loadEvents() {
   const container = document.getElementById("events-container");
   container.innerHTML = "Loading events...";
 
   try {
     const response = await fetch("/view-events");
-    if (!response.ok) {
-      throw new Error("Failed to fetch events.");
-    }
+    if (!response.ok) throw new Error("Failed to fetch events.");
 
     const data = await response.json();
     eventsData = Array.isArray(data) ? data : [];
-
     renderEvents(eventsData);
+
   } catch (error) {
     console.error(error);
-    container.innerHTML =
-      '<p class="empty-state">Unable to load events at the moment.</p>';
+    container.innerHTML = `<p class="empty-state">Unable to load events at the moment.</p>`;
   }
 }
 
-/**
- * Render event cards based on data
- */
+
+// Render all events as cards
 function renderEvents(events) {
   const container = document.getElementById("events-container");
   container.innerHTML = "";
 
   if (!events || events.length === 0) {
-    container.innerHTML =
-      '<p class="empty-state">No events found. Please create one!</p>';
+    container.innerHTML = `<p class="empty-state">No events found. Please create one!</p>`;
     return;
   }
 
-  events.forEach((event) => {
+  events.forEach(event => {
     const card = createEventCard(event);
     container.appendChild(card);
   });
 }
 
-/**
- * Create one event card element
- */
+
+// Create a single event card element
 function createEventCard(event) {
   const card = document.createElement("article");
   card.className = "event-card";
 
-  // Image / placeholder
+  // Image
   const imageWrapper = document.createElement("div");
   imageWrapper.className = "event-card__image";
 
@@ -75,7 +72,7 @@ function createEventCard(event) {
     imageWrapper.appendChild(img);
   }
 
-  // Body
+  // Event content
   const body = document.createElement("div");
   body.className = "event-card__body";
 
@@ -83,51 +80,12 @@ function createEventCard(event) {
   titleEl.className = "event-title";
   titleEl.textContent = event.name || "Untitled Event";
 
-  // Description
-  const descLabel = document.createElement("div");
-  descLabel.className = "event-meta-label";
-  descLabel.textContent = "Description";
-
-  const descValue = document.createElement("p");
-  descValue.className = "event-meta-value";
-  descValue.textContent = event.description || "-";
-
-  // Date
-  const dateLabel = document.createElement("div");
-  dateLabel.className = "event-meta-label";
-  dateLabel.textContent = "Date";
-
-  const dateValue = document.createElement("p");
-  dateValue.className = "event-meta-value";
-  dateValue.textContent = event.date || "-";
-
-  // Time
-  const timeLabel = document.createElement("div");
-  timeLabel.className = "event-meta-label";
-  timeLabel.textContent = "Time";
-
-  const timeValue = document.createElement("p");
-  timeValue.className = "event-meta-value";
-  timeValue.textContent = event.time || "-";
-
-  // Location
-  const locationLabel = document.createElement("div");
-  locationLabel.className = "event-meta-label";
-  locationLabel.textContent = "Location";
-
-  const locationValue = document.createElement("p");
-  locationValue.className = "event-meta-value";
-  locationValue.textContent = event.location || "-";
-
   body.appendChild(titleEl);
-  body.appendChild(descLabel);
-  body.appendChild(descValue);
-  body.appendChild(dateLabel);
-  body.appendChild(dateValue);
-  body.appendChild(timeLabel);
-  body.appendChild(timeValue);
-  body.appendChild(locationLabel);
-  body.appendChild(locationValue);
+
+  appendMeta(body, "Description", event.description);
+  appendMeta(body, "Date", event.date);
+  appendMeta(body, "Time", event.time);
+  appendMeta(body, "Location", event.location);
 
   // Actions
   const actions = document.createElement("div");
@@ -137,7 +95,7 @@ function createEventCard(event) {
   editBtn.className = "btn";
   editBtn.textContent = "Edit";
   editBtn.addEventListener("click", () => {
-    alert("Edit Event feature will be implemented by your teammate.");
+    editEvent(event);
   });
 
   const deleteBtn = document.createElement("button");
@@ -150,7 +108,6 @@ function createEventCard(event) {
   actions.appendChild(editBtn);
   actions.appendChild(deleteBtn);
 
-  // Assemble card
   card.appendChild(imageWrapper);
   card.appendChild(body);
   card.appendChild(actions);
@@ -158,8 +115,23 @@ function createEventCard(event) {
   return card;
 }
 
-/* Delete Modal Logic */
 
+// Helper to add label + value pairs
+function appendMeta(parent, label, value) {
+  const labelEl = document.createElement("div");
+  labelEl.className = "event-meta-label";
+  labelEl.textContent = label;
+
+  const valueEl = document.createElement("p");
+  valueEl.className = "event-meta-value";
+  valueEl.textContent = value || "-";
+
+  parent.appendChild(labelEl);
+  parent.appendChild(valueEl);
+}
+
+
+// Setup delete confirmation modal
 function setupDeleteModal() {
   const overlay = document.getElementById("delete-modal-overlay");
   const confirmBtn = document.getElementById("confirm-delete-btn");
@@ -167,15 +139,10 @@ function setupDeleteModal() {
 
   if (!overlay || !confirmBtn || !cancelBtn) return;
 
-  cancelBtn.addEventListener("click", () => {
-    closeDeleteModal();
-  });
+  cancelBtn.addEventListener("click", closeDeleteModal);
 
   overlay.addEventListener("click", (e) => {
-    // close when clicking outside modal box
-    if (e.target === overlay) {
-      closeDeleteModal();
-    }
+    if (e.target === overlay) closeDeleteModal();
   });
 
   confirmBtn.addEventListener("click", async () => {
@@ -185,26 +152,24 @@ function setupDeleteModal() {
   });
 }
 
+
+// Opens delete modal
 function openDeleteModal(eventId) {
   pendingDeleteId = eventId;
   const overlay = document.getElementById("delete-modal-overlay");
-  if (overlay) {
-    overlay.classList.remove("hidden");
-  }
+  if (overlay) overlay.classList.remove("hidden");
 }
 
+
+// Closes delete modal
 function closeDeleteModal() {
   pendingDeleteId = null;
   const overlay = document.getElementById("delete-modal-overlay");
-  if (overlay) {
-    overlay.classList.add("hidden");
-  }
+  if (overlay) overlay.classList.add("hidden");
 }
 
-/**
- * Call backend DELETE /delete-event/:id
- * (You will implement this route on the backend side) < need to rmb!
- */
+
+// Delete event from backend
 async function handleDelete(id) {
   try {
     const response = await fetch(`/delete-event/${id}`, {
@@ -221,12 +186,15 @@ async function handleDelete(id) {
     const data = await response.json();
     alert(data.message || "Event deleted.");
     await loadEvents();
+
   } catch (error) {
     console.error(error);
     alert("Something went wrong while deleting the event.");
   }
 }
 
+
+// Safe JSON parsing helper
 async function safeJson(response) {
   try {
     return await response.json();

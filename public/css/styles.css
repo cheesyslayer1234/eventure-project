@@ -35,8 +35,13 @@ body {
 .hero {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 32px;
+  justify-content: center;
+  position: relative;
+}
+
+.hero .btn-black {
+  position: absolute;
+  right: 0;
 }
 
 .hero h1 {

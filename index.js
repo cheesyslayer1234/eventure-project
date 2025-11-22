@@ -12,12 +12,39 @@ app.use(bodyParser.json());
 const { viewEvents } = require('./utils/ViewEventUtil');
 const { deleteEvent } = require('./utils/MikealLeowUtil');
 const { addEvent } = require('./utils/MalcolmNgUtil');
+const { editEvent } = require('./utils/HugoYeeUtil');
 
 // API: View Events (must come before express.static)
 app.get('/view-events', viewEvents);
 
 // API: Add Event (from add-event branch)
 app.post('/add-event', addEvent);
+
+// API: Edit Event (from edit-event branch)
+app.put('/edit-event/:id', async (req, res) => {
+  try {
+    // Run the update logic
+    const result = await editEvent(req, res);
+
+    // Stop if response already sent inside the utility
+    if (res.headersSent) return;
+
+    // Send success or error result
+    if (result.success) {
+      return res.status(200).json(result);
+    } else {
+      return res.status(400).json(result);
+    }
+
+  } catch (error) {
+    console.error("Edit event error:", error);
+    // Server error fallback
+    return res.status(500).json({
+      success: false,
+      message: "Server error while updating event."
+    });
+  }
+});
 
 // API: Delete Event
 app.delete('/delete-event/:id', async (req, res) => {
@@ -30,6 +57,7 @@ app.delete('/delete-event/:id', async (req, res) => {
     return res.status(400).json(result);
   }
 });
+
 
 // Serve static frontend files
 app.use(express.static('./public'));
