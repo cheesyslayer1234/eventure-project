@@ -147,3 +147,9 @@ utils/events.json
 # Keep events template under version control
 !utils/events.template.json
 
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
