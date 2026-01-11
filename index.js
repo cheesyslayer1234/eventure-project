@@ -4,23 +4,28 @@ var app = express();
 const PORT = process.env.PORT || 5050;
 var startPage = 'index.html';
 
-// Parse incoming request bodies
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true })); // Parse incoming request bodies
 app.use(bodyParser.json());
 
-// Import backend handlers
-const { viewEvents } = require('./utils/ViewEventUtil');
-const { deleteEvent } = require('./utils/MikealLeowUtil');
-const { addEvent } = require('./utils/MalcolmNgUtil');
-const { editEvent } = require('./utils/HugoYeeUtil');
-
-// API: View Events (must come before express.static)
+const { viewEvents } = require('./utils/ViewEventUtil'); // API: View Events (must come before express.static)
 app.get('/view-events', viewEvents);
 
-// API: Add Event (from add-event branch)
-app.post('/add-event', addEvent);
+// Import backend handlers
+const { addEvent } = require('./utils/MalcolmNgUtil'); // API: Add Event (from add-event branch)
+app.post('/add-event', async (req, res) => {
+  try {
+    const events = await addEvent(req.body);
+    res.status(201).json(events);
+  } catch (err) {
+    if (err.message === 'VALIDATION_ERROR') {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+    res.status(500).json({ message: err.message });
+  }
+});
 
-// API: Edit Event (from edit-event branch)
+
+const { editEvent } = require('./utils/HugoYeeUtil'); // API: Edit Event (from edit-event branch)
 app.put('/edit-event/:id', async (req, res) => {
   try {
     // Run the update logic
@@ -46,7 +51,7 @@ app.put('/edit-event/:id', async (req, res) => {
   }
 });
 
-// API: Delete Event
+const { deleteEvent } = require('./utils/MikealLeowUtil'); // API: Delete Event
 app.delete('/delete-event/:id', async (req, res) => {
   const id = req.params.id;
   const result = await deleteEvent(id);
@@ -58,22 +63,15 @@ app.delete('/delete-event/:id', async (req, res) => {
   }
 });
 
-
-// Serve static frontend files
-app.use(express.static('./public'));
-
-// Default route loader
-app.get('/', (req, res) => {
+app.use(express.static('./public')); // Serve static frontend files
+app.get('/', (req, res) => { // Default route loader
   res.sendFile(__dirname + '/public/' + startPage);
 });
 
-// Start server
-const server = app.listen(PORT, function () {
+const server = app.listen(PORT, function () { // Start server
   const address = server.address();
   const baseUrl = `http://${address.address === '::' ? 'localhost' : address.address}:${address.port}`;
   console.log(`Demo project at: ${baseUrl}`);
 });
 
 module.exports = { app, server };
-
-// Extra comments. 
