@@ -23,7 +23,7 @@ describe('API Test for /add-event endpoint', () => {
         events = [];
 
         jest.spyOn(fs, 'readFile').mockImplementation(async () => JSON.stringify(events));
-        jest.spyOn(fs, 'writeFile').mockImplementation(async (file, data) => {
+        jest.spyOn(fs, 'writeFile').mockImplementation(async (file, data) => { 
             events = JSON.parse(data); // update in-memory array
         });
     });

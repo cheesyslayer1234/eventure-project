@@ -253,7 +253,7 @@ test.describe("Frontend Event Tests", () => {
     const dialog = await dialogPromise;
     expect(dialog.message()).toContain("Error:");
     await dialog.accept();
-  }); //idk bro
+  });
 
   // Error Handling & Exception Validations
   test("Frontend should show server error dialog when backend returns 500", async ({
