@@ -1,44 +1,48 @@
-const fs = require('fs').promises;
-const path = require('path');
-const { Event } = require('../models/Event');
+const fs = require('fs').promises; // Promises API for file operations
+const path = require('path'); // For handling file paths
+const { Event } = require('../models/Event'); // Import Event model
+const RESOURCES_FILE = path.join(__dirname, 'events.json'); // Path to events.json
 
-const RESOURCES_FILE = path.join(__dirname, 'events.json');
-const TEMPLATE_FILE = path.join(__dirname, 'event.template.json');
+// Simple write lock to ensure sequential writes
+let writeLock = Promise.resolve();
+async function addEvent(eventData) {
+    const { name, description, date, time, location, image } = eventData;
 
-async function addEvent(req, res) {
-    try {
-        const { name, description, date, time, location, image } = req.body;
+    // Basic validation
+    if (!name || !description || !date || !time || !location || !image) {
+        throw new Error('VALIDATION_ERROR');
+    }
 
-        if (!name || !description || !date || !time || !location || !image) {
-            return res.status(400).json({ message: "All fields are required." });
-        }
+    const newEvent = new Event(name, description, date, time, location, image);
+    let newResources = [];
 
-        const newEvent = new Event(name, description, date, time, location, image);
-
+    // --- Sequential write to avoid race conditions ---
+    writeLock = writeLock.then(async () => {
         let resources = [];
 
+        // Read existing events (if any)
         try {
             const data = await fs.readFile(RESOURCES_FILE, 'utf8');
-            resources = JSON.parse(data);
-        } catch (err) {
-            if (err.code === 'ENOENT') {
-                const templateData = await fs.readFile(TEMPLATE_FILE, 'utf8');
-                resources = JSON.parse(templateData);
-                await fs.writeFile(RESOURCES_FILE, JSON.stringify(resources, null, 2));
-            } else {
-                throw err;
+            if (data && data.trim() !== '') {
+                resources = JSON.parse(data);
             }
+        } catch (err) {
+            if (err.code !== 'ENOENT') throw err; // Only ignore if file doesn't exist
+            resources = [];
         }
 
         resources.push(newEvent);
+
+        // Write updated events; will throw if write fails
         await fs.writeFile(RESOURCES_FILE, JSON.stringify(resources, null, 2));
 
-        return res.status(201).json(newEvent);
+        newResources = resources;
+    });
 
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: error.message });
-    }
+    // Wait for writeLock; any error in the above block will propagate
+    await writeLock;
+
+    return newResources;
 }
 
 module.exports = { addEvent };

@@ -1,9 +1,13 @@
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
-        reader.onerror = err => reject(err);
+        reader.onerror = (err) => {
+            console.error("FileReader error:", err);
+            reject(err);
+        };
+
+        reader.readAsDataURL(file);
     });
 }
 
@@ -27,8 +31,7 @@ async function addEvent() {
         errorMessage += "Please upload an image.\n";
     } else {
         const file = imageInput.files[0];
-
-        // size check
+        // ----- Size check -----
         if (file.size > 50 * 1024) {
             errorMessage += "Image size must be less than 50KB.\n";
         }
@@ -44,28 +47,37 @@ async function addEvent() {
     const MAX_LOCATION = 150;
     const MAX_DESCRIPTION = 500;
 
-    if (name.value.length > MAX_NAME) errorMessage += `Max character limit reached for Event Name (${MAX_NAME}).\n`;
-    if (location.value.length > MAX_LOCATION) errorMessage += `Max character limit reached for Location (${MAX_LOCATION}).\n`;
-    if (description.value.length > MAX_DESCRIPTION) errorMessage += `Max character limit reached for Description (${MAX_DESCRIPTION}).\n`;
+    if (name.value.length > MAX_NAME)
+        errorMessage += `Max character limit reached for Event Name (${MAX_NAME}).\n`;
+    if (location.value.length > MAX_LOCATION)
+        errorMessage += `Max character limit reached for Location (${MAX_LOCATION}).\n`;
+    if (description.value.length > MAX_DESCRIPTION)
+        errorMessage += `Max character limit reached for Description (${MAX_DESCRIPTION}).\n`;
 
     // ----- Event date validation -----
     if (date.value) {
         const eventDate = new Date(date.value);
         const now = new Date();
-        now.setHours(0, 0, 0, 0); // remove time portion for comparison
+        now.setHours(0, 0, 0, 0); // remove time portion
         if (eventDate < now) {
             errorMessage += "Invalid event date. Please select a future date.\n";
         }
     }
 
-    // ----- If any errors, stop submission -----
+    // ----- Stop submission if errors exist -----
     if (errorMessage) {
         alert(errorMessage);
         return;
     }
 
     // ----- Convert image to Base64 -----
-    const base64Image = await fileToBase64(imageInput.files[0]);
+    let base64Image;
+    try {
+        base64Image = await fileToBase64(imageInput.files[0]);
+    } catch (err) {
+        alert("Failed to read image. Please try again.");
+        return;
+    }
 
     // ----- Send POST request -----
     try {
@@ -78,21 +90,26 @@ async function addEvent() {
                 date: date.value,
                 time: time.value,
                 location: location.value,
-                image: base64Image
-            })
+                image: base64Image,
+            }),
         });
 
-        const data = await res.json();
+        let data = {};
+        try {
+            data = await res.json();
+        } catch {
+            // Non-JSON response (500, aborted, etc)
+        }
 
         if (!res.ok) {
-            alert("Error: " + data.message);
+            alert(data.message ? "Error: " + data.message : "Server error");
             return;
         }
 
         alert("Event created successfully!");
         document.getElementById("addEventForm").reset();
         $('#addEventModal').modal('hide');
-
+        loadEvents();
     } catch (err) {
         console.error(err);
         alert("Server error");

@@ -1,15 +1,4 @@
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file); // Read file as Base64
-        reader.onload = () => resolve(reader.result); // Resolve promise on success
-        reader.onerror = err => reject(err);          // Reject promise on error
-    });
-}
-
-
 function editEvent(selectedEvent) {
-
     // Parse the event data if it's a JSON string
     const eventData = typeof selectedEvent === "string"
         ? JSON.parse(selectedEvent)
