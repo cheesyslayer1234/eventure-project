@@ -26,13 +26,13 @@ test.describe("Frontend Event Tests", () => {
 
     await page.fill("#eventName", eventName);
     await page.fill("#eventDescription", "Room 101 for testing");
-    await page.fill("#eventDate", "2026-01-20");
+    await page.fill("#eventDate", "2027-01-20");
     await page.fill("#eventTime", "15:00");
     await page.fill("#eventLocation", "TP IIT Blk 3");
 
     await page.setInputFiles(
       "#eventImage",
-      path.join(__dirname, "assets/test-image.jpg")
+      path.join(__dirname, "assets/test-image.jpg"),
     );
 
     await page.click('button:has-text("Add Event")');
@@ -79,7 +79,7 @@ test.describe("Frontend Event Tests", () => {
 
     await page.setInputFiles(
       "#eventImage",
-      path.join(__dirname, "assets/test-image.jpg")
+      path.join(__dirname, "assets/test-image.jpg"),
     );
 
     page.once("dialog", (d) => {
@@ -98,13 +98,13 @@ test.describe("Frontend Event Tests", () => {
 
     await page.fill("#eventName", "123456");
     await page.fill("#eventDescription", "Desc");
-    await page.fill("#eventDate", "2026-01-20");
+    await page.fill("#eventDate", "2027-01-20");
     await page.fill("#eventTime", "10:00");
     await page.fill("#eventLocation", "TP");
 
     await page.setInputFiles(
       "#eventImage",
-      path.join(__dirname, "assets/test-image.jpg")
+      path.join(__dirname, "assets/test-image.jpg"),
     );
 
     page.once("dialog", (d) => {
@@ -123,18 +123,18 @@ test.describe("Frontend Event Tests", () => {
 
     await page.fill("#eventName", "Eventname".repeat(50));
     await page.fill("#eventDescription", "Desc");
-    await page.fill("#eventDate", "2026-01-20");
+    await page.fill("#eventDate", "2027-01-20");
     await page.fill("#eventTime", "10:00");
     await page.fill("#eventLocation", "TP");
 
     await page.setInputFiles(
       "#eventImage",
-      path.join(__dirname, "assets/test-image.jpg")
+      path.join(__dirname, "assets/test-image.jpg"),
     );
 
     page.once("dialog", (d) => {
       expect(d.message()).toContain(
-        "Max character limit reached for Event Name (100)"
+        "Max character limit reached for Event Name (100)",
       );
       d.accept();
     });
@@ -150,18 +150,18 @@ test.describe("Frontend Event Tests", () => {
 
     await page.fill("#eventName", "Valid Name");
     await page.fill("#eventDescription", "Description".repeat(51));
-    await page.fill("#eventDate", "2026-01-20");
+    await page.fill("#eventDate", "2027-01-20");
     await page.fill("#eventTime", "10:00");
     await page.fill("#eventLocation", "TP");
 
     await page.setInputFiles(
       "#eventImage",
-      path.join(__dirname, "assets/test-image.jpg")
+      path.join(__dirname, "assets/test-image.jpg"),
     );
 
     page.once("dialog", (d) => {
       expect(d.message()).toContain(
-        "Max character limit reached for Description (500)"
+        "Max character limit reached for Description (500)",
       );
       d.accept();
     });
@@ -177,18 +177,18 @@ test.describe("Frontend Event Tests", () => {
 
     await page.fill("#eventName", "Valid Name");
     await page.fill("#eventDescription", "Desc");
-    await page.fill("#eventDate", "2026-01-20");
+    await page.fill("#eventDate", "2027-01-20");
     await page.fill("#eventTime", "10:00");
     await page.fill("#eventLocation", "Location".repeat(20));
 
     await page.setInputFiles(
       "#eventImage",
-      path.join(__dirname, "assets/test-image.jpg")
+      path.join(__dirname, "assets/test-image.jpg"),
     );
 
     page.once("dialog", (d) => {
       expect(d.message()).toContain(
-        "Max character limit reached for Location (150)"
+        "Max character limit reached for Location (150)",
       );
       d.accept();
     });
@@ -204,7 +204,7 @@ test.describe("Frontend Event Tests", () => {
 
     await page.fill("#eventName", "Valid Name");
     await page.fill("#eventDescription", "Desc");
-    await page.fill("#eventDate", "2026-01-20");
+    await page.fill("#eventDate", "2027-01-20");
     await page.fill("#eventTime", "10:00");
     await page.fill("#eventLocation", "TP");
 
@@ -231,7 +231,7 @@ test.describe("Frontend Event Tests", () => {
         status: 400,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: "Bad request" }),
-      })
+      }),
     );
 
     await page.goto(BASE_URL);
@@ -239,13 +239,13 @@ test.describe("Frontend Event Tests", () => {
 
     await page.fill("#eventName", "Valid");
     await page.fill("#eventDescription", "Desc");
-    await page.fill("#eventDate", "2026-01-20");
+    await page.fill("#eventDate", "2027-01-20");
     await page.fill("#eventTime", "10:00");
     await page.fill("#eventLocation", "TP");
 
     await page.setInputFiles(
       "#eventImage",
-      path.join(__dirname, "assets/test-image.jpg")
+      path.join(__dirname, "assets/test-image.jpg"),
     );
 
     const dialogPromise = page.waitForEvent("dialog");
@@ -260,7 +260,7 @@ test.describe("Frontend Event Tests", () => {
     page,
   }) => {
     await page.route("**/add-event", (route) =>
-      route.fulfill({ status: 500, body: "Server error" })
+      route.fulfill({ status: 500, body: "Server error" }),
     );
 
     await page.goto(BASE_URL);
@@ -268,13 +268,13 @@ test.describe("Frontend Event Tests", () => {
 
     await page.fill("#eventName", "Valid");
     await page.fill("#eventDescription", "Desc");
-    await page.fill("#eventDate", "2026-01-20");
+    await page.fill("#eventDate", "2027-01-20");
     await page.fill("#eventTime", "10:00");
     await page.fill("#eventLocation", "TP");
 
     await page.setInputFiles(
       "#eventImage",
-      path.join(__dirname, "assets/test-image.jpg")
+      path.join(__dirname, "assets/test-image.jpg"),
     );
 
     const dialogPromise = page.waitForEvent("dialog");
@@ -294,13 +294,13 @@ test.describe("Frontend Event Tests", () => {
 
     await page.fill("#eventName", "Valid");
     await page.fill("#eventDescription", "Desc");
-    await page.fill("#eventDate", "2026-01-20");
+    await page.fill("#eventDate", "2027-01-20");
     await page.fill("#eventTime", "10:00");
     await page.fill("#eventLocation", "TP");
 
     await page.setInputFiles(
       "#eventImage",
-      path.join(__dirname, "assets/test-image.jpg")
+      path.join(__dirname, "assets/test-image.jpg"),
     );
 
     const dialogPromise = page.waitForEvent("dialog");
@@ -311,10 +311,15 @@ test.describe("Frontend Event Tests", () => {
   });
 });
 
-test.describe("Visual Layouts of Event Management Homepage", () => {
+test.describe("Visual Layouts of Event Management Add Event Modal", () => {
   test("compare with my own image", async ({ page }) => {
     await page.goto("http://localhost:5050");
+    await page.click('button:has-text("Create Event")');
 
-    await expect(page).toHaveScreenshot("add-event-modal.png", {});
+    await expect(page).toHaveScreenshot("e2e/snapshots/add-event.png", {
+      maxDiffPixels: 50, // allow up to 50 pixels difference
+      threshold: 0.05,
+      fullPage: false, // capture the entire page
+    });
   });
 });

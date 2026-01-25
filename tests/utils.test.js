@@ -23,7 +23,7 @@ describe('Unit Tests for addEvent utility', () => {
         const eventData = { // Sample event data
             name: 'Empty Event File',
             description: 'This is a test event.',
-            date: '2026-10-10',
+            date: '2027-10-10',
             time: '10:00',
             location: 'TP IIT Blk 10',
             image: image64String
@@ -44,7 +44,7 @@ describe('Unit Tests for addEvent utility', () => {
             {
                 name: 'Existing Event Data',
                 description: 'This is a test event.',
-                date: '2026-10-10',
+                date: '2027-10-10',
                 time: '10:00',
                 location: 'TP IIT Blk 10',
                 image: image64String
@@ -57,7 +57,7 @@ describe('Unit Tests for addEvent utility', () => {
         const newEvent = { // New event data to add
             name: 'New Event Data',
             description: 'This is a test event.',
-            date: '2026-11-11',
+            date: '2027-11-11',
             time: '11:00',
             location: 'TP BUS Blk 11',
             image: image64String
@@ -74,7 +74,7 @@ describe('Unit Tests for addEvent utility', () => {
     it('should throw validation error when required fields are missing', async () => {
         const invalidEvent = { // Missing description field
             name: 'Missing Description (field missing)',
-            date: '2026-01-01',
+            date: '2027-01-01',
             time: '10:00',
             location: 'TP',
             image: image64String
@@ -91,7 +91,7 @@ describe('Unit Tests for addEvent utility', () => {
         const eventData = { // Sample event data
             name: 'Edge Event',
             description: 'Empty file test',
-            date: '2026-01-12',
+            date: '2027-01-12',
             time: '12:00',
             location: 'TP IIT',
             image: image64String
@@ -117,8 +117,8 @@ describe('Unit Tests for addEvent utility', () => {
         });
 
         // Two events to add concurrently
-        const event1 = { name: 'Event1', description: 'A', date: '2026-01-01', time: '10:00', location: 'L1', image: image64String };
-        const event2 = { name: 'Event2', description: 'B', date: '2026-01-02', time: '11:00', location: 'L2', image: image64String };
+        const event1 = { name: 'Event1', description: 'A', date: '2027-01-01', time: '10:00', location: 'L1', image: image64String };
+        const event2 = { name: 'Event2', description: 'B', date: '2027-01-02', time: '11:00', location: 'L2', image: image64String };
 
         // Add both events concurrently
         await Promise.all([
@@ -141,7 +141,7 @@ describe('Unit Tests for addEvent utility', () => {
         const eventData = {
             name: 'New File Event',
             description: 'File missing case',
-            date: '2026-01-13',
+            date: '2027-01-13',
             time: '13:00',
             location: 'TP IIT',
             image: image64String
@@ -163,7 +163,7 @@ describe('Unit Tests for addEvent utility', () => {
         const eventData = { // Sample event data
             name: 'Write Fail Event',
             description: 'This should fail on write',
-            date: '2026-01-11',
+            date: '2027-01-11',
             time: '11:00',
             location: 'TP IIT',
             image: image64String

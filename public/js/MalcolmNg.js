@@ -6,7 +6,6 @@ function fileToBase64(file) {
             console.error("FileReader error:", err);
             reject(err);
         };
-
         reader.readAsDataURL(file);
     });
 }
@@ -31,7 +30,6 @@ async function addEvent() {
         errorMessage += "Please upload an image.\n";
     } else {
         const file = imageInput.files[0];
-        // ----- Size check -----
         if (file.size > 50 * 1024) {
             errorMessage += "Image size must be less than 50KB.\n";
         }
@@ -58,13 +56,13 @@ async function addEvent() {
     if (date.value) {
         const eventDate = new Date(date.value);
         const now = new Date();
-        now.setHours(0, 0, 0, 0); // remove time portion
+        now.setHours(0, 0, 0, 0);
         if (eventDate < now) {
             errorMessage += "Invalid event date. Please select a future date.\n";
         }
     }
 
-    // ----- Stop submission if errors exist -----
+    // Stop submission if errors exist
     if (errorMessage) {
         alert(errorMessage);
         return;
@@ -97,19 +95,21 @@ async function addEvent() {
         let data = {};
         try {
             data = await res.json();
-        } catch {
-            // Non-JSON response (500, aborted, etc)
-        }
+        } catch { }
 
         if (!res.ok) {
             alert(data.message ? "Error: " + data.message : "Server error");
             return;
         }
 
+        // ----- Hide modal first -----
+        $('#addEventModal').modal('hide');
+
+        // ----- Show alert after modal is hiding -----
         alert("Event created successfully!");
         document.getElementById("addEventForm").reset();
-        $('#addEventModal').modal('hide');
         loadEvents();
+
     } catch (err) {
         console.error(err);
         alert("Server error");

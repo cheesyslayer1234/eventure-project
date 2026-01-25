@@ -10,7 +10,7 @@ describe('API Test for /add-event endpoint', () => {
     const validEvent = {
         name: 'Test Event',
         description: 'This is a test event.',
-        date: '2026-01-10',
+        date: '2027-01-10',
         time: '12:00',
         location: 'TP IIT Blk 3-5-51',
         image: image64String

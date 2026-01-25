@@ -18,7 +18,7 @@ describe("Frontend Event Tests", () => {
 
     cy.get("#eventName").type(eventName);
     cy.get("#eventDescription").type("Room 101 for testing");
-    cy.get("#eventDate").type("2026-01-20");
+    cy.get("#eventDate").type("2027-01-20");
     cy.get("#eventTime").type("15:00");
     cy.get("#eventLocation").type("TP IIT Blk 3");
     cy.get("#eventImage").selectFile("cypress/fixtures/test-image.jpg");
@@ -65,7 +65,7 @@ describe("Frontend Event Tests", () => {
   it("Invalid event name should show error", () => {
     cy.get("#eventName").type("123456");
     cy.get("#eventDescription").type("Desc");
-    cy.get("#eventDate").type("2026-01-20");
+    cy.get("#eventDate").type("2027-01-20");
     cy.get("#eventTime").type("10:00");
     cy.get("#eventLocation").type("TP");
     cy.get("#eventImage").selectFile("cypress/fixtures/test-image.jpg");
@@ -80,7 +80,7 @@ describe("Frontend Event Tests", () => {
   it("Event name exceeding max length", () => {
     cy.get("#eventName").type(maxCharacterDummy);
     cy.get("#eventDescription").type("Desc");
-    cy.get("#eventDate").type("2026-01-20");
+    cy.get("#eventDate").type("2027-01-20");
     cy.get("#eventTime").type("10:00");
     cy.get("#eventLocation").type("TP");
     cy.get("#eventImage").selectFile("cypress/fixtures/test-image.jpg");
@@ -97,7 +97,7 @@ describe("Frontend Event Tests", () => {
   it("Description exceeding max length", () => {
     cy.get("#eventName").type("Valid Name");
     cy.get("#eventDescription").type(maxCharacterDummy);
-    cy.get("#eventDate").type("2026-01-20");
+    cy.get("#eventDate").type("2027-01-20");
     cy.get("#eventTime").type("10:00");
     cy.get("#eventLocation").type("TP");
     cy.get("#eventImage").selectFile("cypress/fixtures/test-image.jpg");
@@ -114,7 +114,7 @@ describe("Frontend Event Tests", () => {
   it("Location exceeding max length", () => {
     cy.get("#eventName").type("Valid Name");
     cy.get("#eventDescription").type("Desc");
-    cy.get("#eventDate").type("2026-01-20");
+    cy.get("#eventDate").type("2027-01-20");
     cy.get("#eventTime").type("10:00");
     cy.get("#eventLocation").type(maxCharacterDummy);
     cy.get("#eventImage").selectFile("cypress/fixtures/test-image.jpg");
@@ -129,7 +129,7 @@ describe("Frontend Event Tests", () => {
   it("Image exceeding max size", () => {
     cy.get("#eventName").type("Valid Name");
     cy.get("#eventDescription").type("Desc");
-    cy.get("#eventDate").type("2026-01-20");
+    cy.get("#eventDate").type("2027-01-20");
     cy.get("#eventTime").type("10:00");
     cy.get("#eventLocation").type("TP");
 
@@ -200,7 +200,7 @@ function fillValidForm(): void {
     .should("be.visible")  
     .clear({ force: true })
     .type("Desc", { force: true });
-  cy.get("#eventDate").type("2026-01-20");
+  cy.get("#eventDate").type("2027-01-20");
   cy.get("#eventTime").type("10:00");
   cy.get("#eventLocation").type("TP");
   cy.get("#eventImage").selectFile("cypress/fixtures/test-image.jpg");
