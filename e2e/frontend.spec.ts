@@ -317,9 +317,9 @@ test.describe("Visual Layouts of Event Management Add Event Modal", () => {
     await page.click('button:has-text("Create Event")');
 
     await expect(page).toHaveScreenshot("e2e/snapshots/add-event.png", {
-      maxDiffPixels: 50, // allow up to 50 pixels difference
+      maxDiffPixels: 50,
       threshold: 0.05,
-      fullPage: false, // capture the entire page
+      fullPage: false,
     });
   });
 });
