@@ -59,7 +59,7 @@ async function convertCoverage() {
             const normalizedPath = filePath.replace(/\\/g, '/');
 
             // 🔒 ONLY include Joe.js
-            if (!normalizedPath.endsWith('/Joe.js')) {
+            if (!normalizedPath.endsWith('/MalcolmNg.js')) {
                 console.warn(`Skipping non-target file: ${normalizedPath}`);
                 continue;
             }
