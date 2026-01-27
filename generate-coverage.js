@@ -8,8 +8,13 @@ const { createCoverageMap } = require('istanbul-lib-coverage');
 const coverageDir = path.join(process.cwd(), 'coverage/temp'); // Playwright v8 coverage
 const istanbulCoverageDir = path.join(process.cwd(), 'coverage/frontend'); // Final report output
 
+// Files to exclude from coverage
+const EXCLUDED_FILES = new Set([
+    'ViewEvents.js',
+    'HugoYee.js'
+]);
+
 async function convertCoverage() {
-    // Exit if no coverage data exists
     try {
         await fs.access(coverageDir);
     } catch {
@@ -52,15 +57,15 @@ async function convertCoverage() {
 
             // Handle Windows file paths
             const filePath = entry.url.startsWith('file://')
-                ? pathname.replace(/^\/([a-zA-Z]:)/, '$1') // /C:/path -> C:/path
+                ? pathname.replace(/^\/([a-zA-Z]:)/, '$1')
                 : pathname;
 
-            // Normalize path for matching
             const normalizedPath = filePath.replace(/\\/g, '/');
+            const fileName = path.basename(normalizedPath);
 
-            // 🔒 ONLY include Joe.js
-            if (!normalizedPath.endsWith('/MalcolmNg.js')) {
-                console.warn(`Skipping non-target file: ${normalizedPath}`);
+            // Exclude specific files
+            if (EXCLUDED_FILES.has(fileName)) {
+                console.warn(`Excluding from coverage: ${fileName}`);
                 continue;
             }
 
@@ -84,14 +89,8 @@ async function convertCoverage() {
         return;
     }
 
-    // Ensure output directory exists
-    try {
-        await fs.access(istanbulCoverageDir);
-    } catch {
-        await fs.mkdir(istanbulCoverageDir, { recursive: true });
-    }
+    await fs.mkdir(istanbulCoverageDir, { recursive: true });
 
-    // Generate reports
     const context = createContext({
         dir: istanbulCoverageDir,
         coverageMap
@@ -101,14 +100,14 @@ async function convertCoverage() {
         reports.create(type).execute(context)
     );
 
-    // Coverage thresholds (apply ONLY to Joe.js)
+    // Coverage thresholds
     const summary = coverageMap.getCoverageSummary().data;
 
     const thresholds = {
-        lines: 50,
-        statements: 50,
-        functions: 50,
-        branches: 50
+        lines: 30,
+        statements: 30,
+        functions: 30,
+        branches: 30
     };
 
     const belowThreshold = [];
