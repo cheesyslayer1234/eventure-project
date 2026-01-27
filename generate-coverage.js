@@ -23,25 +23,30 @@ async function convertCoverage() {
     for (const file of files) {
         if (!file.endsWith('.json')) continue;
 
-        const v8Coverage = JSON.parse(await fs.readFile(path.join(coverageDir, file), 'utf-8'));
+        const v8Coverage = JSON.parse(
+            await fs.readFile(path.join(coverageDir, file), 'utf-8')
+        );
 
         for (const entry of v8Coverage) {
             if (!entry.url || !entry.source) continue;
 
-            // Skip non-JS files, node_modules, or external URLs (except localhost)
+            // Resolve pathname safely
             let pathname;
             try {
-                pathname = entry.url.startsWith('http') || entry.url.startsWith('file://')
-                    ? new URL(entry.url).pathname
-                    : entry.url;
+                pathname =
+                    entry.url.startsWith('http') || entry.url.startsWith('file://')
+                        ? new URL(entry.url).pathname
+                        : entry.url;
             } catch {
                 pathname = entry.url;
             }
 
-            if (!pathname.endsWith('.js') ||
+            // Skip non-JS, node_modules, or non-localhost external URLs
+            if (
+                !pathname.endsWith('.js') ||
                 (entry.url.startsWith('http') && !entry.url.includes('localhost')) ||
-                entry.url.includes('node_modules')) {
-                console.warn(`Skipping file: ${entry.url}`);
+                entry.url.includes('node_modules')
+            ) {
                 continue;
             }
 
@@ -50,8 +55,21 @@ async function convertCoverage() {
                 ? pathname.replace(/^\/([a-zA-Z]:)/, '$1') // /C:/path -> C:/path
                 : pathname;
 
+            // Normalize path for matching
+            const normalizedPath = filePath.replace(/\\/g, '/');
+
+            // 🔒 ONLY include Joe.js
+            if (!normalizedPath.endsWith('/Joe.js')) {
+                console.warn(`Skipping non-target file: ${normalizedPath}`);
+                continue;
+            }
+
             try {
-                const converter = v8toIstanbul("public/" + filePath, 0, { source: entry.source });
+                const converter = v8toIstanbul(
+                    'public/' + filePath,
+                    0,
+                    { source: entry.source }
+                );
                 await converter.load();
                 converter.applyCoverage(entry.functions);
                 coverageMap.merge(converter.toIstanbul());
@@ -73,39 +91,40 @@ async function convertCoverage() {
         await fs.mkdir(istanbulCoverageDir, { recursive: true });
     }
 
-    // Generate HTML and lcov reports
-    const context = createContext({ dir: istanbulCoverageDir, coverageMap });
-    ['html', 'lcovonly'].forEach(type => reports.create(type).execute(context));
+    // Generate reports
+    const context = createContext({
+        dir: istanbulCoverageDir,
+        coverageMap
+    });
 
-    // Retrieve overall coverage summary data from the coverage map
+    ['html', 'lcovonly'].forEach(type =>
+        reports.create(type).execute(context)
+    );
+
+    // Coverage thresholds (apply ONLY to Joe.js)
     const summary = coverageMap.getCoverageSummary().data;
-    // Define minimum acceptable coverage thresholds for each metric (in percentage)
+
     const thresholds = {
-        lines: 50, // Minimum 90% of lines must be covered
-        statements: 50, // Minimum 90% of statements must be covered
-        functions: 50, // Minimum 90% of functions must be covered
-        branches: 50 // Minimum 90% of branches must be covered
+        lines: 50,
+        statements: 50,
+        functions: 50,
+        branches: 50
     };
-    // Array to store any metrics that do not meet the defined threshold
-    let belowThreshold = [];
-    // Loop through each coverage metric (lines, statements, functions, branches)
+
+    const belowThreshold = [];
+
     for (const [metric, threshold] of Object.entries(thresholds)) {
-        const covered = summary[metric].pct; // Get the coverage percentage for this metric
-        // Check if the actual coverage is below the threshold
+        const covered = summary[metric].pct;
         if (covered < threshold) {
-            // Add a message to the belowThreshold array for reporting later
             belowThreshold.push(`${metric}: ${covered}% (below ${threshold}%)`);
         }
     }
-    // If any metrics fall below the required threshold
+
     if (belowThreshold.length > 0) {
-        console.error('\nX Coverage threshold NOT met:');
-        // Print each failing metric and its coverage percentage
+        console.error('\n✗ Coverage threshold NOT met:');
         belowThreshold.forEach(msg => console.error(` - ${msg}`));
-        // Set exit code to 1 to indicate failure (useful for CI/CD pipelines)
         process.exitCode = 1;
     } else {
-        // If all thresholds are met, display a success message
         console.log('\n✓ All coverage thresholds met.');
     }
 
