@@ -31,7 +31,7 @@ describe('Unit Tests for addEvent utility', () => {
 
         const result = await addEvent(eventData); // Call addEvent
 
-        expect(result.length).toBe(2); // Expect one event in result
+        expect(result.length).toBe(1); // Expect one event in result
         expect(result[0].name).toBe(eventData.name); // Verify event name
 
         const savedData = JSON.parse(fs.writeFile.mock.calls[0][1]); // Get data written to file
