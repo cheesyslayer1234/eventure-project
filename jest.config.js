@@ -20,10 +20,10 @@ module.exports = {
     // Tests will fail if coverage falls below these percentages
     coverageThreshold: {
         global: {
-            branches: 200, // minimum 90% of conditional branches covered
-            functions: 200, // minimum 90% of functions covered
-            lines: 200, // minimum 90% of lines covered
-            statements: 200, // minimum 90% of statements covered
+            branches: 90, // minimum 90% of conditional branches covered
+            functions: 90, // minimum 90% of functions covered
+            lines: 90, // minimum 90% of lines covered
+            statements: 90, // minimum 90% of statements covered
         },
     },
 };
