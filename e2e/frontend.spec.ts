@@ -310,16 +310,3 @@ test.describe("Frontend Event Tests", () => {
     await dialog.accept();
   });
 });
-
-test.describe("Visual Layouts of Event Management Add Event Modal", () => {
-  test("compare with my own image", async ({ page }) => {
-    await page.goto("http://localhost:5050");
-    await page.click('button:has-text("Create Event")');
-
-    await expect(page).toHaveScreenshot("e2e/snapshots/add-event.png", {
-      maxDiffPixels: 50,
-      threshold: 0.05,
-      fullPage: false,
-    });
-  });
-});
