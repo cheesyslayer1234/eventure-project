@@ -1,6 +1,6 @@
 name: Eventure CI Pipeline
 
-# Trigger workflow on push or pull request
+# Trigger workflow on push or pull request for main branch
 on:
   push:
     branches:
@@ -10,31 +10,54 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout code
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # 2. Set up Node.js
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      # 2. Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
 
-    # 3. Install dependencies
-    - name: Install dependencies
-      run: npm install
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm install
 
-    # 4. Run tests
-    - name: Run tests
-      run: npm test
-      run: npm test:coverage
-      run: npm test-frontend
-      run: npm test-frontend:coverage
+      # 4. Run all tests
+      - name: Run tests
+        run: |
+          npm test
+          npm run test:coverage
+          npm run test-frontend
+          npm run test-frontend:coverage
 
-    # 5. Build project
-    - name: Build project
-      run: docker build -t eventure-app . 
+      # 5. Build Docker image
+      - name: Build Docker image
+        run: docker build -t eventure-app:${{ github.run_number }} .
+
+      # 6. Set up Minikube
+      - name: Start Minikube
+        uses: medyagh/setup-minikube@v2
+        with:
+          minikube-version: 'v1.30.1'
+          driver: docker
+
+      # 7. Load Docker image into Minikube
+      - name: Load image into Minikube
+        run: minikube image load eventure-app:${{ github.run_number }}
+
+      # 8. Deploy to Kubernetes
+      - name: Deploy app to Minikube
+        run: |
+          # Replace build number in deployment.yaml
+          sed "s/{{BUILD_NUMBER}}/${{ github.run_number }}/g" deployment.yaml | kubectl apply -f -
+          # Apply service
+          kubectl apply -f service.yaml
+          # Check pods & services
+          kubectl get pods
+          kubectl get services
