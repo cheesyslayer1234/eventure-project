@@ -1,6 +1,5 @@
 name: Eventure CI Pipeline
 
-# Trigger workflow on push or pull request for main branch
 on:
   push:
     branches:
@@ -28,65 +27,58 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4a. Install Linux dependencies required for Playwright browsers
+      # 4. Install minimal OS dependencies for Playwright
       - name: Install Playwright dependencies
         run: |
-         sudo apt-get update
-         sudo apt-get install -y \
-         libnss3 \
-         libatk1.0-0 \
-         libatk-bridge2.0-0 \
-         libcups2 \
-         libdrm2 \
-         libxkbcommon0 \
-         libxcomposite1 \
-         libxdamage1 \
-         libxrandr2 \
-         libgbm1 \
-         libasound2 \
-         libpangocairo-1.0-0 \
-         libgtk-4-1 \
-         libglib2.0-0 \
-         wget
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libcups2 \
+            libdrm2 \
+            libxkbcommon0 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxrandr2 \
+            libgbm1 \
+            libasound2 \
+            libpangocairo-1.0-0 \
+            libgtk-4-1 \
+            libglib2.0-0 \
+            wget
 
-      # 4b. Install Playwright browsers
-      - name: Install Playwright Browsers
+      # 5. Install Playwright browsers
+      - name: Install Playwright browsers
         run: npx playwright install
 
-      # 5. Run all tests
+      # 6. Run backend & frontend tests
       - name: Run tests
         run: |
-          echo "Running backend tests..."
           npm test
-          echo "Running backend coverage..."
           npm run test:coverage
-          echo "Running frontend tests..."
           npm run test-frontend
-          echo "Running frontend coverage..."
           npm run test-frontend:coverage
 
-      # 6. Build Docker image
+      # 7. Build Docker image
       - name: Build Docker image
         run: docker build -t eventure-app:${{ github.run_number }} .
 
-      # 7. Set up Minikube
+      # 8. Set up Minikube
       - name: Start Minikube
         uses: medyagh/setup-minikube@latest
         with:
           minikube-version: 'v1.30.1'
           driver: docker
 
-      # 8. Load Docker image into Minikube
-      - name: Load image into Minikube
+      # 9. Load Docker image into Minikube
+      - name: Load Docker image into Minikube
         run: minikube image load eventure-app:${{ github.run_number }}
 
-      # 9. Deploy to Kubernetes
+      # 10. Deploy to Kubernetes
       - name: Deploy app to Minikube
         run: |
-          # Replace build number in deployment.yaml
           sed "s/{{BUILD_NUMBER}}/${{ github.run_number }}/g" deployment.yaml | kubectl apply -f -
-          # Apply service
           kubectl apply -f service.yaml
-          # Verify pods and services
           kubectl get pods
           kubectl get services
