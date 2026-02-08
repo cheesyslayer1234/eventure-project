@@ -10,4 +10,4 @@ spec:
     - protocol: TCP        # Protocol used by the service
       port: 5050           # External port for the service; use 5050 for Minikube, 80 can be used in production for standard HTTP
       targetPort: 5050     # Port on the container to forward traffic to
-      nodePort: 30090      # Fixed external port on the node (range: 30000–32767) 
+      nodePort: 30081      # Fixed external port on the node (range: 30000–32767) 
