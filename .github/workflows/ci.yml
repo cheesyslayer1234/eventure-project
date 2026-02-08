@@ -1,6 +1,5 @@
 name: Eventure CI Pipeline
 
-# Trigger workflow on push or pull request for main branch
 on:
   push:
     branches:
@@ -28,25 +27,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4. Install minimal OS dependencies for Playwright (Ubuntu 24.04 safe)
+      # 4. Install Playwright OS dependencies (bulletproof)
       - name: Install Playwright dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libnss3 \
-            libatk1.0-0 \
-            libatk-bridge2.0-0 \
-            libcups2 \
-            libdrm2 \
-            libxkbcommon0 \
-            libxcomposite1 \
-            libxdamage1 \
-            libxrandr2 \
-            libgbm1 \
-            libpangocairo-1.0-0 \
-            libgtk-4-1 \
-            libglib2.0-0 \
-            wget
+        run: sudo npx playwright install-deps
 
       # 5. Install Playwright browsers
       - name: Install Playwright browsers
@@ -79,7 +62,6 @@ jobs:
       - name: Deploy app to Minikube
         run: |
           sed "s/{{BUILD_NUMBER}}/${{ github.run_number }}/g" deployment.yaml | kubectl apply -f -
-          # Apply service
           kubectl apply -f service.yaml
           kubectl get pods
           kubectl get services
