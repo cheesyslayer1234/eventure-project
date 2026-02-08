@@ -37,7 +37,7 @@ jobs:
           npm run test-frontend:coverage
 
       - name: Build Docker image
-        run: docker build -t eventure-gh .
+        run: docker build -t eventure-GH .
 
       - name: Start Minikube
         uses: medyagh/setup-minikube@latest
@@ -48,7 +48,7 @@ jobs:
         run: kubectl wait --for=condition=Ready nodes --all --timeout=120s
 
       - name: Load Docker image into Minikube
-        run: minikube image load eventure-gh
+        run: minikube image load eventure-GH
 
       - name: Deploy application to Kubernetes
         run: |
@@ -57,5 +57,8 @@ jobs:
           kubectl get pods
           kubectl get services
 
-      - name: Show service access
-        run: echo "App is available at http://$(minikube ip):30081"
+      - name: Forward service port to localhost
+        run: |
+          nohup kubectl port-forward svc/eventure-project-gh-service 30081:5050 >/dev/null 2>&1 &
+          echo "Port 5050 in Minikube is now forwarded to localhost:30081"
+          echo "App is available at http://localhost:30081"
