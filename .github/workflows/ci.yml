@@ -28,30 +28,38 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4. Run all tests
+      # 4. Install Playwright browsers (required for frontend E2E tests)
+      - name: Install Playwright Browsers
+        run: npx playwright install
+
+      # 5. Run all tests
       - name: Run tests
         run: |
+          echo "Running backend tests..."
           npm test
+          echo "Running backend coverage..."
           npm run test:coverage
+          echo "Running frontend tests..."
           npm run test-frontend
+          echo "Running frontend coverage..."
           npm run test-frontend:coverage
 
-      # 5. Build Docker image
+      # 6. Build Docker image
       - name: Build Docker image
         run: docker build -t eventure-app:${{ github.run_number }} .
 
-      # 6. Set up Minikube
+      # 7. Set up Minikube
       - name: Start Minikube
         uses: medyagh/setup-minikube@latest
         with:
           minikube-version: 'v1.30.1'
           driver: docker
 
-      # 7. Load Docker image into Minikube
+      # 8. Load Docker image into Minikube
       - name: Load image into Minikube
         run: minikube image load eventure-app:${{ github.run_number }}
 
-      # 8. Deploy to Kubernetes
+      # 9. Deploy to Kubernetes
       - name: Deploy app to Minikube
         run: |
           # Replace build number in deployment.yaml
