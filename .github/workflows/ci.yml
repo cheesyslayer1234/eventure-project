@@ -35,7 +35,7 @@ jobs:
           sudo apt-get install -y \
             libgtk-4-1 \
             libgraphene-1.0-0 \
-            libwoff2-1 \
+            libwoff2dec0 \
             libvpx9 \
             libevent-2.1-7 \
             libopus0 \
@@ -48,8 +48,8 @@ jobs:
             libsecret-1-0 \
             libhyphen0 \
             libwayland-server0 \
-            libgles2-mesa \
-            libx264-163
+            mesa-utils \
+            libx264-dev
 
       # 4b. Install Playwright browsers
       - name: Install Playwright Browsers
