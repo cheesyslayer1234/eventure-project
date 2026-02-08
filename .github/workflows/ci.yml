@@ -30,10 +30,10 @@ jobs:
 
     # 4. Run tests
     - name: Run tests
-      run: npm run test
-      run: npm run test:coverage
-      run: npm run test-frontend
-      run: npm run test-frontend:coverage
+      run: npm test
+      run: npm test:coverage
+      run: npm test-frontend
+      run: npm test-frontend:coverage
 
     # 5. Build project
     - name: Build project
