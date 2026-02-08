@@ -53,7 +53,7 @@ jobs:
 
       - name: Deploy application to Kubernetes
         run: |
-          sed "s/{{BUILD_NUMBER}}/${{ github.run_number }}/g" deployment.yaml | kubectl apply -f -
-          kubectl apply -f service.yaml
+          sed "s/{{BUILD_NUMBER}}/${{ github.run_number }}/g" deploymentGH.yaml | kubectl apply -f -
+          kubectl apply -f serviceGH.yaml
           kubectl get pods
           kubectl get services
