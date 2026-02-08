@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: eventure-project-gh
-          image: eventure-GH   
+          image: eventure-gh   
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5050
