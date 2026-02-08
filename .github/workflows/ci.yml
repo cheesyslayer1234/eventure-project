@@ -24,11 +24,34 @@ jobs:
         with:
           node-version: "18"
 
-      # 3. Install dependencies
+      # 3. Install project dependencies
       - name: Install dependencies
         run: npm install
 
-      # 4. Install Playwright browsers (required for frontend E2E tests)
+      # 4a. Install Linux dependencies required for Playwright browsers
+      - name: Install Playwright dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-4-1 \
+            libgraphene-1.0-0 \
+            libwoff2-1 \
+            libvpx9 \
+            libevent-2.1-7 \
+            libopus0 \
+            libgstreamer-plugins-base1.0-0 \
+            libgstreamer1.0-0 \
+            libgstreamer-plugins-bad1.0-0 \
+            libflite1 \
+            libavif16 \
+            libharfbuzz-icu0 \
+            libsecret-1-0 \
+            libhyphen0 \
+            libwayland-server0 \
+            libgles2-mesa \
+            libx264-163
+
+      # 4b. Install Playwright browsers
       - name: Install Playwright Browsers
         run: npx playwright install
 
@@ -66,6 +89,6 @@ jobs:
           sed "s/{{BUILD_NUMBER}}/${{ github.run_number }}/g" deployment.yaml | kubectl apply -f -
           # Apply service
           kubectl apply -f service.yaml
-          # Check pods & services
+          # Verify pods and services
           kubectl get pods
           kubectl get services
