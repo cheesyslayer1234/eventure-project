@@ -2,64 +2,55 @@ name: Eventure CI Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
 
-      # 3. Install dependencies
-      - name: Install project dependencies
+      - name: Install dependencies
         run: npm install
 
-      # 4. Install Playwright OS dependencies
       - name: Install Playwright system dependencies
         run: npx playwright install-deps
 
-      # 5. Install Playwright browsers
       - name: Install Playwright browsers
         run: npx playwright install
 
-      # 6. Run backend & frontend tests
-      - name: Run backend and frontend tests
+      - name: Run backend & frontend tests
         run: |
           npm test
           npm run test:coverage
           npm run test-frontend
           npm run test-frontend:coverage
 
-      # 7. Build Docker image
       - name: Build Docker image
         run: docker build -t eventure-app:${{ github.run_number }} .
 
-      # 8. Start Minikube
       - name: Start Minikube
         uses: medyagh/setup-minikube@v0.0.14
         with:
           minikube-version: v1.30.1
           driver: docker
 
-      # 9. Load Docker image into Minikube
+      - name: Wait for Kubernetes
+        run: kubectl wait --for=condition=Ready nodes --all --timeout=120s
+
       - name: Load Docker image into Minikube
         run: minikube image load eventure-app:${{ github.run_number }}
 
-      # 10. Deploy to Kubernetes
       - name: Deploy application to Kubernetes
         run: |
           sed "s/{{BUILD_NUMBER}}/${{ github.run_number }}/g" deployment.yaml | kubectl apply -f -
