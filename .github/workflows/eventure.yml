@@ -37,7 +37,7 @@ jobs:
           npm run test-frontend:coverage
 
       - name: Build Docker image
-        run: docker build -t eventure-app:${{ github.run_number }} .
+        run: docker build -t eventure-GH .
 
       - name: Start Minikube
         uses: medyagh/setup-minikube@latest
@@ -48,11 +48,14 @@ jobs:
         run: kubectl wait --for=condition=Ready nodes --all --timeout=120s
 
       - name: Load Docker image into Minikube
-        run: minikube image load eventure-app:${{ github.run_number }}
+        run: minikube image load eventure-GH
 
       - name: Deploy application to Kubernetes
         run: |
-          sed "s/{{BUILD_NUMBER}}/${{ github.run_number }}/g" deploymentGH.yaml | kubectl apply -f -
+          kubectl apply -f deploymentGH.yaml
           kubectl apply -f serviceGH.yaml
           kubectl get pods
           kubectl get services
+
+      - name: Show service access
+        run: echo "App is available at http://$(minikube ip):30081"

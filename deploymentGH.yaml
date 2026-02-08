@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: eventure-project-deploy  # Name of the deployment
+  name: eventure-project-gh-deploy
 spec:
-  replicas: 2 # specifies how many identical replicas (pods) of the application should be maintained, in this case, 2, which means Kubernetes will ensure that two pods running the specified container are always available
+  replicas: 2
   selector:
     matchLabels:
-      app: eventure-project  # Selector to match pods managed by this deployment
+      app: eventure-project-gh
   template:
     metadata:
       labels:
-        app: eventure-project  # Labels applied to pods created by this deployment
+        app: eventure-project-gh
     spec:
       containers:
-        - name: eventure-project  # Name of the container
-          image: eventure-project:{{BUILD_NUMBER}}  # Docker image to use for the container
-          imagePullPolicy: IfNotPresent   # Do not pull from Docker Hub
+        - name: eventure-project-gh
+          image: eventure-GH   
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 5050  # Port that the container exposes
+            - containerPort: 5050
