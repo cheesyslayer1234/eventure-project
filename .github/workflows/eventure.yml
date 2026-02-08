@@ -56,9 +56,3 @@ jobs:
           kubectl apply -f serviceGH.yaml
           kubectl get pods
           kubectl get services
-
-      - name: Forward service port to localhost
-        run: |
-          nohup kubectl port-forward svc/eventure-project-gh-service 30081:5050 >/dev/null 2>&1 &
-          echo "Port 5050 in Minikube is now forwarded to localhost:30081"
-          echo "App is available at http://localhost:30081"
