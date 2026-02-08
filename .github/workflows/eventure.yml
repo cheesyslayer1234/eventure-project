@@ -37,7 +37,7 @@ jobs:
           npm run test-frontend:coverage
 
       - name: Build Docker image
-        run: docker build -t eventure-GH .
+        run: docker build -t eventure-gh .
 
       - name: Start Minikube
         uses: medyagh/setup-minikube@latest
@@ -48,7 +48,7 @@ jobs:
         run: kubectl wait --for=condition=Ready nodes --all --timeout=120s
 
       - name: Load Docker image into Minikube
-        run: minikube image load eventure-GH
+        run: minikube image load eventure-gh
 
       - name: Deploy application to Kubernetes
         run: |
